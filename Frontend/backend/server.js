@@ -94,3 +94,11 @@ app.post("/api/enquiries", async (req, res) => {
 app.listen(PORT, () => {
     console.log(`TRUVEX EXIM server running on port ${PORT}`);
 });
+app.use(cors());
+app.use(express.json());
+const path = require("path");
+
+app.use(express.static(path.join(__dirname)));
+app.get("/", (req, res) => {
+    res.sendFile(path.join(__dirname, "index.html"));
+});
