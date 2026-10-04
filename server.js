@@ -2,6 +2,7 @@ require("dotenv").config();
 
 const express = require("express");
 const cors = require("cors");
+const path = require("path");
 const { createClient } = require("@supabase/supabase-js");
 
 const app = express();
@@ -9,7 +10,8 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 
-const PORT = process.env.PORT || 5000;
+// Serve frontend files
+app.use(express.static(__dirname));
 
 // Supabase connection
 const supabase = createClient(
@@ -17,9 +19,9 @@ const supabase = createClient(
     process.env.SUPABASE_KEY
 );
 
-// Test route
+// Homepage
 app.get("/", (req, res) => {
-    res.send("TRUVEX EXIM Backend is Running!");
+    res.sendFile(path.join(__dirname, "index.html"));
 });
 
 // Enquiry API
@@ -70,7 +72,7 @@ app.post("/api/enquiries", async (req, res) => {
         res.status(201).json({
             success: true,
             message: "Enquiry submitted successfully!",
-            data: data
+            data
         });
 
     } catch (error) {
@@ -83,8 +85,8 @@ app.post("/api/enquiries", async (req, res) => {
     }
 });
 
+const PORT = process.env.PORT || 5000;
+
 app.listen(PORT, () => {
     console.log(`TRUVEX EXIM server running on port ${PORT}`);
 });
-
-
