@@ -513,7 +513,7 @@ select {
     align-items: center;
 
     background-image:
-        url("../../images/hero.jpg");
+        url("images/hero.jpg");
 
     background-size: cover;
 
