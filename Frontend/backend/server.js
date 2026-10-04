@@ -18,8 +18,11 @@ const supabase = createClient(
 );
 
 // Test route
-app.get("/", (req, res) => {
-    res.send("TRUVEX EXIM Backend is Running!");
+app.get("/api/test", (req, res) => {
+    res.json({
+        success: true,
+        message: "TRUVEX EXIM Backend is Running!"
+    });
 });
 
 // Enquiry API
@@ -39,9 +42,6 @@ app.post("/api/enquiries", async (req, res) => {
             message
         } = req.body;
 
-        console.log("Form data:", req.body);
-
-        // Required fields
         if (!name || !phone || !email) {
             return res.status(400).json({
                 success: false,
@@ -49,25 +49,23 @@ app.post("/api/enquiries", async (req, res) => {
             });
         }
 
-        // Save enquiry to Supabase
         const { data, error } = await supabase
             .from("enquiries")
             .insert([
                 {
-                    name: name,
-                    company: company,
-                    phone: phone,
-                    email: email,
-                    service: service,
-                    requirement: requirement,
-                    message: message,
+                    name,
+                    company,
+                    phone,
+                    email,
+                    service,
+                    requirement,
+                    message,
                     status: "New"
                 }
             ])
             .select();
 
         if (error) {
-
             console.error("SUPABASE ERROR:", error);
 
             return res.status(500).json({
@@ -76,12 +74,10 @@ app.post("/api/enquiries", async (req, res) => {
             });
         }
 
-        console.log("ENQUIRY SAVED SUCCESSFULLY:", data);
-
         res.status(201).json({
             success: true,
             message: "Enquiry submitted successfully!",
-            data: data
+            data
         });
 
     } catch (error) {
@@ -95,7 +91,6 @@ app.post("/api/enquiries", async (req, res) => {
     }
 });
 
-// Start server
 app.listen(PORT, () => {
     console.log(`TRUVEX EXIM server running on port ${PORT}`);
 });
