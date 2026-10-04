@@ -86,5 +86,5 @@ app.post("/api/enquiries", async (req, res) => {
 app.listen(PORT, () => {
     console.log(`TRUVEX EXIM server running on port ${PORT}`);
 });
-<script src="script.js"></script>
+
 
