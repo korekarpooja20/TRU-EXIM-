@@ -86,3 +86,48 @@ app.post("/api/enquiries", async (req, res) => {
 app.listen(PORT, () => {
     console.log(`TRUVEX EXIM server running on port ${PORT}`);
 });
+<script src="script.js"></script>
+
+<script>
+document.getElementById("enquiryForm").addEventListener("submit", async function (e) {
+    e.preventDefault();
+
+    const form = e.target;
+
+    const enquiryData = {
+        name: document.getElementById("name").value,
+        company: document.getElementById("company").value,
+        phone: document.getElementById("phone").value,
+        email: document.getElementById("email").value,
+        service: document.getElementById("service").value,
+        requirement: document.getElementById("requirement").value,
+        message: document.getElementById("message").value
+    };
+
+    try {
+        const response = await fetch("/api/enquiries", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify(enquiryData)
+        });
+
+        const result = await response.json();
+
+        if (result.success) {
+            alert("Enquiry submitted successfully!");
+            form.reset();
+        } else {
+            alert(result.message || "Failed to submit enquiry.");
+        }
+
+    } catch (error) {
+        console.error("Error:", error);
+        alert("Unable to submit enquiry. Please try again.");
+    }
+});
+</script>
+
+</body>
+</html>
