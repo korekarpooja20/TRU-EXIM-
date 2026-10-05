@@ -1,3 +1,11 @@
+export default async function handler(req, res) {
+    console.log("ENQUIRIES API CALLED");
+
+    return res.status(200).json({
+        success: true,
+        message: "ENQUIRIES API IS WORKING"
+    });
+}
 const { createClient } = require("@supabase/supabase-js");
 
 const supabase = createClient(
