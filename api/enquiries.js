@@ -1,17 +1,12 @@
-export default async function handler(req, res) {
-    console.log("ENQUIRIES API CALLED");
-
-    return res.status(200).json({
-        success: true,
-        message: "ENQUIRIES API IS WORKING"
-    });
-}
-const { createClient } = require("@supabase/supabase-js");
+import { createClient } from "@supabase/supabase-js";
+import { Resend } from "resend";
 
 const supabase = createClient(
     process.env.SUPABASE_URL,
     process.env.SUPABASE_KEY
 );
+
+const resend = new Resend(process.env.RESEND_API_KEY);
 
 export default async function handler(req, res) {
 
@@ -34,14 +29,10 @@ export default async function handler(req, res) {
             message
         } = req.body;
 
-        if (!name || !phone || !email) {
-            return res.status(400).json({
-                success: false,
-                message: "Name, phone and email are required."
-            });
-        }
+        // =========================
+        // 1. SAVE TO SUPABASE
+        // =========================
 
-        // Save enquiry to Supabase
         const { data, error } = await supabase
             .from("enquiries")
             .insert([
@@ -52,102 +43,57 @@ export default async function handler(req, res) {
                     email,
                     service,
                     requirement,
-                    message,
-                    status: "New"
+                    message
                 }
             ])
             .select();
 
         if (error) {
-            console.error("Supabase error:", error);
+            console.error("SUPABASE ERROR:", error);
 
             return res.status(500).json({
                 success: false,
-                message: "Failed to save enquiry."
+                message: "Failed to save enquiry to database."
             });
         }
 
-        // Send email notification
-        try {
+        // =========================
+        // 2. SEND EMAIL
+        // =========================
 
-            const emailResponse = await fetch(
-                "https://api.resend.com/emails",
-                {
-                    method: "POST",
-                    headers: {
-                        "Content-Type": "application/json",
-                        "Authorization":
-                            `Bearer ${process.env.RESEND_API_KEY}`
-                    },
-                    body: JSON.stringify({
-                        from:
-                            "TRUVEX EXIM <onboarding@resend.dev>",
+        const emailResult = await resend.emails.send({
+            from: "TRUVEX EXIM <onboarding@resend.dev>",
+            to: ["korekarpooja20@gmail.com"],
+            subject: "New Enquiry - TRUVEX EXIM",
 
-                        to: [
-                            process.env.RESEND_TO_EMAIL
-                        ],
+            html: `
+                <h2>New Enquiry Received</h2>
 
-                        subject:
-                            `New TRUVEX EXIM Enquiry - ${name}`,
+                <p><strong>Name:</strong> ${name}</p>
+                <p><strong>Company:</strong> ${company}</p>
+                <p><strong>Phone:</strong> ${phone}</p>
+                <p><strong>Email:</strong> ${email}</p>
+                <p><strong>Service:</strong> ${service}</p>
+                <p><strong>Requirement:</strong> ${requirement}</p>
+                <p><strong>Message:</strong> ${message}</p>
+            `
+        });
 
-                        text: `
-NEW TRUVEX EXIM ENQUIRY
+        console.log("SUPABASE SUCCESS:", data);
+        console.log("RESEND RESULT:", emailResult);
 
-Name: ${name}
-
-Company/Business:
-${company || "Not provided"}
-
-Phone:
-${phone}
-
-Email:
-${email}
-
-Requirement:
-${requirement || "Not provided"}
-
-Product/Service:
-${service || "Not provided"}
-
-Message:
-${message || "Not provided"}
-
-----------------------------------------
-TRUVEX EXIM
-Connecting Markets. Building Businesses. Delivering Solutions.
-----------------------------------------
-                        `
-                    })
-                }
-            );
-
-            const emailResult =
-                await emailResponse.json();
-
-            console.log("Resend response:", emailResult);
-
-        } catch (emailError) {
-
-            console.error(
-                "Email error:",
-                emailError
-            );
-        }
-
-        return res.status(201).json({
+        return res.status(200).json({
             success: true,
-            message: "Enquiry submitted successfully!",
-            data
+            message: "Enquiry submitted successfully."
         });
 
     } catch (error) {
 
-        console.error("Server error:", error);
+        console.error("SERVER ERROR:", error);
 
         return res.status(500).json({
             success: false,
-            message: "Server error."
+            message: "Server error. Please try again."
         });
     }
 }
