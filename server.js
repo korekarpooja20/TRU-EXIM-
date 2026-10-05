@@ -28,7 +28,7 @@ const PORT = process.env.PORT || 5000;
 // =========================================================
 
 app.use(express.static(path.join(__dirname)));
-app.use("images", express.static(path.join(__dirname, "images")));
+app.use("/images", express.static(path.join(__dirname, "images")));
 
 // =========================================================
 // SUPABASE CONNECTION
