@@ -349,8 +349,6 @@ select {
 
     gap: 30px;
 }
-
-
 .brand {
 
     display: flex;
@@ -358,21 +356,23 @@ select {
     align-items: center;
 
     flex-shrink: 0;
+
+    margin-left: auto;
 }
-
-
 .brand img {
 
-    width: 150px;
+    width: 65px;
 
-    height: auto;
-
-    max-height: 58px;
+    height: 45px;
 
     object-fit: contain;
+
+    border-radius: 5px;
 }
 
 
+
+ 
 /* =========================================================
    07. MAIN NAVIGATION
 ========================================================= */
