@@ -1,0 +1,9 @@
+{
+  "name": "tru-exim-frontend",
+  "version": "1.0.0",
+  "private": true,
+  "dependencies": {
+    "@supabase/supabase-js": "^2.57.4",
+    "resend": "^6.1.0"
+  }
+}
