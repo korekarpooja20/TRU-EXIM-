@@ -46,8 +46,7 @@ app.get("/", (req, res) => {
 // BACKEND TEST
 // =========================================================
 
-app.get("/api/test", (req, res) => {
-
+app.get("/test", (req, res) => {
     res.json({
         success: true,
         message: "TRUVEX EXIM Backend is Running!"
@@ -60,7 +59,7 @@ app.get("/api/test", (req, res) => {
 // ENQUIRY API
 // =========================================================
 
-app.post("/api/enquiries", async (req, res) => {
+app.post("/enquiries", async (req, res) => {
 
     try {
 
