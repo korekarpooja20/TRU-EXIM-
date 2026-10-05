@@ -199,4 +199,8 @@ app.use((req, res) => {
 // START SERVER
 // =========================================================
 
-module.exports = app;
+app.listen(PORT, () => {
+    console.log(
+        `TRUVEX EXIM server running on port ${PORT}`
+    );
+});
