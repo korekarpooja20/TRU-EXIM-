@@ -155,6 +155,33 @@ app.post("/api/enquiries", async (req, res) => {
     }
 
 });
+// =========================================================
+// HTML PAGE ROUTES
+// =========================================================
+
+app.get("/index.html", (req, res) => {
+    res.sendFile(path.join(__dirname, "index.html"));
+});
+
+app.get("/contact.html", (req, res) => {
+    res.sendFile(path.join(__dirname, "contact.html"));
+});
+
+app.get("/about.html", (req, res) => {
+    res.sendFile(path.join(__dirname, "about.html"));
+});
+
+app.get("/consultation.html", (req, res) => {
+    res.sendFile(path.join(__dirname, "consultation.html"));
+});
+
+app.get("/import-export.html", (req, res) => {
+    res.sendFile(path.join(__dirname, "import-export.html"));
+});
+
+app.get("/products.html", (req, res) => {
+    res.sendFile(path.join(__dirname, "products.html"));
+});
 
 
 // =========================================================
