@@ -18,7 +18,6 @@ export default async function handler(req, res) {
     }
 
     try {
-
         const {
             name,
             company,
@@ -29,21 +28,18 @@ export default async function handler(req, res) {
             message
         } = req.body;
 
-        // =========================
-        // 1. SAVE TO SUPABASE
-        // =========================
-
+        // Save enquiry in Supabase
         const { data, error } = await supabase
             .from("enquiries")
             .insert([
                 {
-                    name,
-                    company,
-                    phone,
-                    email,
-                    service,
-                    requirement,
-                    message
+                    name: name,
+                    company: company,
+                    phone: phone,
+                    email: email,
+                    service: service,
+                    requirement: requirement,
+                    message: message
                 }
             ])
             .select();
@@ -53,17 +49,17 @@ export default async function handler(req, res) {
 
             return res.status(500).json({
                 success: false,
-                message: "Failed to save enquiry to database."
+                message: "Failed to save enquiry."
             });
         }
 
-        // =========================
-        // 2. SEND EMAIL
-        // =========================
-
+        // Send email using Resend
         const emailResult = await resend.emails.send({
             from: "TRUVEX EXIM <onboarding@resend.dev>",
-            to: ["korekarpooja20@gmail.com"],
+
+            // येथे तुमचा email टाका
+            to: ["YOUR_EMAIL@gmail.com"],
+
             subject: "New Enquiry - TRUVEX EXIM",
 
             html: `
