@@ -1,22 +1,50 @@
+const path = require("path");
 const express = require("express");
 const cors = require("cors");
 const { createClient } = require("@supabase/supabase-js");
 
 const app = express();
 
+
+// =========================================================
+// MIDDLEWARE
+// =========================================================
+
 app.use(cors());
 app.use(express.json());
 
-// Supabase
+
+// =========================================================
+// STATIC FILES
+// =========================================================
+
+app.use(express.static(path.join(__dirname, "..")));
+
+
+// =========================================================
+// SUPABASE
+// =========================================================
+
 const supabase = createClient(
     process.env.SUPABASE_URL,
     process.env.SUPABASE_KEY
 );
 
 
-// ===============================
-// TEST API
-// ===============================
+// =========================================================
+// HOME PAGE
+// =========================================================
+
+app.get("/", (req, res) => {
+    res.sendFile(
+        path.join(__dirname, "..", "index.html")
+    );
+});
+
+
+// =========================================================
+// BACKEND TEST
+// =========================================================
 
 app.get("/api/test", (req, res) => {
 
@@ -28,9 +56,9 @@ app.get("/api/test", (req, res) => {
 });
 
 
-// ===============================
+// =========================================================
 // ENQUIRY API
-// ===============================
+// =========================================================
 
 app.post("/api/enquiries", async (req, res) => {
 
@@ -47,7 +75,10 @@ app.post("/api/enquiries", async (req, res) => {
         } = req.body;
 
 
-        // Validation
+        // =================================================
+        // VALIDATION
+        // =================================================
+
         if (!name || !phone || !email) {
 
             return res.status(400).json({
@@ -58,9 +89,9 @@ app.post("/api/enquiries", async (req, res) => {
         }
 
 
-        // ===============================
+        // =================================================
         // SAVE TO SUPABASE
-        // ===============================
+        // =================================================
 
         const { data, error } = await supabase
             .from("enquiries")
@@ -79,9 +110,16 @@ app.post("/api/enquiries", async (req, res) => {
             .select();
 
 
+        // =================================================
+        // SUPABASE ERROR
+        // =================================================
+
         if (error) {
 
-            console.error("Supabase error:", error);
+            console.error(
+                "Supabase error:",
+                error
+            );
 
             return res.status(500).json({
                 success: false,
@@ -91,9 +129,9 @@ app.post("/api/enquiries", async (req, res) => {
         }
 
 
-        // ===============================
-        // SEND EMAIL USING RESEND
-        // ===============================
+        // =================================================
+        // SEND EMAIL NOTIFICATION
+        // =================================================
 
         try {
 
@@ -110,14 +148,18 @@ app.post("/api/enquiries", async (req, res) => {
 
                     body: JSON.stringify({
 
-                        from: "TRUVEX EXIM <onboarding@resend.dev>",
+                        from:
+                            "TRUVEX EXIM <onboarding@resend.dev>",
 
-                        to: [process.env.RESEND_TO_EMAIL],
+                        to: [
+                            process.env.RESEND_TO_EMAIL
+                        ],
 
-                        subject: `New TRUVEX EXIM Enquiry - ${name}`,
+                        subject:
+                            `New TRUVEX EXIM Enquiry - ${name}`,
 
                         text: `
-🔔 NEW TRUVEX EXIM ENQUIRY
+NEW TRUVEX EXIM ENQUIRY
 
 Hello TRUVEX,
 
@@ -125,15 +167,20 @@ I am interested in your products/services.
 
 Name: ${name}
 
-Company/Business: ${company || "Not provided"}
+Company/Business:
+${company || "Not provided"}
 
-Phone: ${phone}
+Phone:
+${phone}
 
-Email: ${email}
+Email:
+${email}
 
-Product/Service: ${service || "Not provided"}
+Requirement:
+${requirement || "Not provided"}
 
-Requirement: ${requirement || "Not provided"}
+Product/Service:
+${service || "Not provided"}
 
 Message:
 ${message || "Not provided"}
@@ -141,36 +188,59 @@ ${message || "Not provided"}
 Please share the details, pricing and further information.
 
 Thank you.
+
+----------------------------------------
+TRUVEX EXIM
+Connecting Markets. Building Businesses. Delivering Solutions.
+----------------------------------------
                         `
                     })
                 }
             );
 
 
-            const emailResult = await emailResponse.json();
+            const emailResult =
+                await emailResponse.json();
 
-            console.log("Resend response:", emailResult);
 
+            if (!emailResponse.ok) {
 
-        } catch (emailError) {
+                console.error(
+                    "Resend error:",
+                    emailResult
+                );
+
+            } else {
+
+                console.log(
+                    "Email sent successfully:",
+                    emailResult
+                );
+
+            }
+
+        }
+
+        catch (emailError) {
 
             console.error(
-                "Email notification error:",
+                "Email sending error:",
                 emailError
             );
 
         }
 
 
-        // ===============================
-        // FINAL SUCCESS
-        // ===============================
+        // =================================================
+        // SUCCESS
+        // =================================================
 
         return res.status(201).json({
 
             success: true,
 
-            message: "Enquiry submitted successfully!",
+            message:
+                "Enquiry submitted successfully!",
 
             data: data
 
@@ -180,7 +250,10 @@ Thank you.
 
     catch (error) {
 
-        console.error("Server error:", error);
+        console.error(
+            "Server error:",
+            error
+        );
 
         return res.status(500).json({
 
@@ -194,5 +267,9 @@ Thank you.
 
 });
 
+
+// =========================================================
+// EXPORT
+// =========================================================
 
 module.exports = app;
