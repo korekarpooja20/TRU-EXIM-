@@ -1,3 +1,8 @@
+// =========================================================
+// TRUVEX EXIM - SERVER.JS
+// Express Backend + Static Website + Supabase
+// =========================================================
+
 require("dotenv").config();
 
 const express = require("express");
@@ -9,6 +14,13 @@ const app = express();
 
 
 // =========================================================
+// PORT
+// =========================================================
+
+const PORT = process.env.PORT || 5000;
+
+
+// =========================================================
 // MIDDLEWARE
 // =========================================================
 
@@ -17,18 +29,18 @@ app.use(express.json());
 
 
 // =========================================================
-// PORT
+// STATIC WEBSITE FILES
 // =========================================================
 
-const PORT = process.env.PORT || 5000;
+// HTML, CSS, JavaScript and other root files
+app.use(express.static(__dirname));
 
+// Images folder
+app.use(
+    "/images",
+    express.static(path.join(__dirname, "images"))
+);
 
-// =========================================================
-// SERVE FRONTEND FILES
-// =========================================================
-
-app.use(express.static(path.join(__dirname)));
-app.use("/images", express.static(path.join(__dirname, "images")));
 
 // =========================================================
 // SUPABASE CONNECTION
@@ -54,10 +66,12 @@ app.get("/", (req, res) => {
 // =========================================================
 
 app.get("/api/test", (req, res) => {
+
     res.json({
         success: true,
         message: "TRUVEX EXIM Backend is Running!"
     });
+
 });
 
 
@@ -95,7 +109,7 @@ app.post("/api/enquiries", async (req, res) => {
 
 
         // -------------------------------------------------
-        // SAVE TO SUPABASE
+        // SAVE ENQUIRY TO SUPABASE
         // -------------------------------------------------
 
         const { data, error } = await supabase
@@ -155,32 +169,72 @@ app.post("/api/enquiries", async (req, res) => {
     }
 
 });
+
+
 // =========================================================
 // HTML PAGE ROUTES
 // =========================================================
 
 app.get("/index.html", (req, res) => {
-    res.sendFile(path.join(__dirname, "index.html"));
+
+    res.sendFile(
+        path.join(__dirname, "index.html")
+    );
+
 });
+
 
 app.get("/contact.html", (req, res) => {
-    res.sendFile(path.join(__dirname, "contact.html"));
+
+    res.sendFile(
+        path.join(__dirname, "contact.html")
+    );
+
 });
+
 
 app.get("/about.html", (req, res) => {
-    res.sendFile(path.join(__dirname, "about.html"));
+
+    res.sendFile(
+        path.join(__dirname, "about.html")
+    );
+
 });
+
 
 app.get("/consultation.html", (req, res) => {
-    res.sendFile(path.join(__dirname, "consultation.html"));
+
+    res.sendFile(
+        path.join(__dirname, "consultation.html")
+    );
+
 });
+
 
 app.get("/import-export.html", (req, res) => {
-    res.sendFile(path.join(__dirname, "import-export.html"));
+
+    res.sendFile(
+        path.join(__dirname, "import-export.html")
+    );
+
 });
 
+
 app.get("/products.html", (req, res) => {
-    res.sendFile(path.join(__dirname, "products.html"));
+
+    res.sendFile(
+        path.join(__dirname, "products.html")
+    );
+
+});
+
+
+app.get("/services.html", (req, res) => {
+
+    res.sendFile(
+        path.join(__dirname, "services.html")
+    );
+
 });
 
 
@@ -200,7 +254,9 @@ app.use((req, res) => {
 // =========================================================
 
 app.listen(PORT, () => {
+
     console.log(
         `TRUVEX EXIM server running on port ${PORT}`
     );
+
 });
