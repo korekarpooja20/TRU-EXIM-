@@ -58,7 +58,7 @@ export default async function handler(req, res) {
             from: "TRUVEX EXIM <onboarding@resend.dev>",
 
             // येथे तुमचा email टाका
-            to: ["YOUR_EMAIL@gmail.com"],
+            to: ["korekarpooja20@gmail.com"],
 
             subject: "New Enquiry - TRUVEX EXIM",
 
